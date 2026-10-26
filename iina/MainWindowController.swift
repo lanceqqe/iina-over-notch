@@ -2130,6 +2130,9 @@ class MainWindowController: PlayerWindowController {
     // Don't hide UI when auto hide control bar is disabled
     guard force || Preference.bool(for: .enableControlBarAutoHide) else { return }
 
+    if animationState == .shown || animationState == .willShow {
+      player.events.emit(.controlsVisibilityChanged, data: false)
+    }
     animationState = .willHide
     player.refreshSyncUITimer()
     fadeableViews.forEach { (v) in
@@ -2161,6 +2164,9 @@ class MainWindowController: PlayerWindowController {
   func showUI() {
     if player.disableUI { return }
     guard !liveText.isActive, !interactiveMode.isActive else { return }
+    if animationState == .hidden || animationState == .willHide {
+      player.events.emit(.controlsVisibilityChanged, data: true)
+    }
     animationState = .willShow
     fadeableViews.forEach { (v) in
       v.isHidden = false

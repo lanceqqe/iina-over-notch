@@ -18,6 +18,14 @@ A fork of [IINA](https://github.com/iina/iina) 1.5.0 that can play video **over 
 - **No update checks**: the "Check for Updates" menu item and settings are removed and Sparkle never checks, so this build is not replaced by an official release.
   **Проверка обновлений вырезана**, чтобы сборку не заменило официальное обновление.
 
+## Video Info plugin / Плагин Video Info
+
+[`plugins/video-info`](plugins/video-info) shows badges in the top-right corner of the player: resolution (e.g. `3840×2160 · 4K`), frame rate, and **HDR10**, **HLG** or **Dolby Vision &lt;profile&gt;**. The badges fade in and out together with the on-screen controls, when you move the cursor. Toggle them with <kbd>⌘</kbd><kbd>⌥</kbd><kbd>I</kbd> or *Plugins → Video Info*.
+
+Плагин показывает в правом верхнем углу разрешение, частоту кадров и значок **HDR10 / HLG / Dolby Vision**. Плашки появляются вместе с кнопками управления, когда двигаешь курсор. Вкл/выкл: <kbd>⌘</kbd><kbd>⌥</kbd><kbd>I</kbd>.
+
+Install: download `Video-Info.iinaplgz` from the release and open it with IINA, or copy the folder to `~/Library/Application Support/com.colliderli.iina/plugins/io.lance.videoinfo.iinaplugin`. In other IINA builds the badges work too but stay on all the time, since only this fork reports when the controls hide.
+
 ## Building / Сборка
 
 ```bash

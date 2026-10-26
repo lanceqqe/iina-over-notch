@@ -41,6 +41,8 @@ class EventController {
     static let windowWillClose = Name("iina.window-will-close")
 
     static let musicModeChanged = Name("iina.music-mode.changed")
+    /// The on screen controls faded in (`true`) or out (`false`).
+    static let controlsVisibilityChanged = Name("iina.controls-visibility.changed")
     static let pipChanged = Name("iina.pip.changed")
 
     static let fileLoaded = Name("iina.file-loaded")

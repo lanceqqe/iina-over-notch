@@ -1,0 +1,15 @@
+{
+  "name": "Video Info",
+  "identifier": "io.lance.videoinfo",
+  "version": "1.0.0",
+  "description": "Shows resolution, frame rate and HDR10 / HLG / Dolby Vision badges over the video.",
+  "author": {
+    "name": "lanceqqe",
+    "url": "https://github.com/lanceqqe/iina-over-notch"
+  },
+  "entry": "main.js",
+  "permissions": ["video-overlay", "show-osd"],
+  "preferenceDefaults": {
+    "visible": true
+  }
+}
