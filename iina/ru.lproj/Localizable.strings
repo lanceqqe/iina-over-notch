@@ -54,6 +54,9 @@
 "quicksetting.item_none" = "Нет";
 "quicksetting.hwdec" = "Аппаратное декодирование";
 "quicksetting.over_notch" = "Видео поверх челки";
+"quicksetting.over_notch_fill.original" = "Оригинал";
+"quicksetting.over_notch_fill.stretch" = "Растянуть";
+"quicksetting.over_notch_fill.zoom" = "Приблизить";
 "quicksetting.deinterlace" = "Деинтерлейсинг";
 "quicksetting.hdr" = "HDR";
 "quicksetting.hide" = "Скрыть";

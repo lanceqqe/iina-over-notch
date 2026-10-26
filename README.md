@@ -13,14 +13,10 @@ A fork of [IINA](https://github.com/iina/iina) 1.5.0 that can play video **over 
 - When it is off, full screen is the normal macOS full screen, which notch utilities recognize, exactly like upstream IINA.
   Когда выключен — обычный системный полноэкранный режим, как в оригинальной IINA.
 - The switch takes effect immediately if you're already in IINA's own full screen; otherwise on the next full screen.
+- **Fill mode**, shown under the switch while it is on: **Original** (IINA's own scaling), **Stretch** (the whole frame, aspect ratio ignored) or **Zoom** (aspect ratio kept, edges cropped). It applies only in full screen over the notch; IINA's scaling comes back when you leave it.
+  **Режим заполнения** под переключателем, пока он включён: **Оригинал** (обычное масштабирование IINA), **Растянуть** (весь кадр, пропорции искажаются) или **Приблизить** (пропорции сохраняются, края обрезаются). Действует только в полноэкранном режиме поверх челки.
 - **No update checks**: the "Check for Updates" menu item and settings are removed and Sparkle never checks, so this build is not replaced by an official release.
   **Проверка обновлений вырезана**, чтобы сборку не заменило официальное обновление.
-
-## Notch Fill plugin / Плагин Notch Fill
-
-[`plugins/notch-fill`](plugins/notch-fill) fills the screen in full screen: **Fill** (crop the edges) or **Stretch** (ignore aspect ratio). Toggle with <kbd>⌘</kbd><kbd>⌥</kbd><kbd>F</kbd> or *Plugins → Notch Fill*.
-
-Install: copy the folder to `~/Library/Application Support/com.colliderli.iina/plugins/io.lance.notchfill.iinaplugin` and enable it in *Settings → Plugins*.
 
 ## Building / Сборка
 

@@ -141,6 +141,7 @@ class SidebarVideoPane: SidebarScrollView {
         ui.flexibleSpace(),
         OverNotchSwitch(),
       ))
+      stack.addArrangedSubview(OverNotchFillView())
     }
 
     container.addSubview(stack)
@@ -500,6 +501,56 @@ fileprivate class HwdecSwitch: NSSwitch {
 
   @objc private func hwdecAction(_ sender: AnyObject) {
     player.toggleHardwareDecoding(state == .on)
+  }
+}
+
+
+/// Picks how video fills the screen in full screen over the notch. Only shown while that mode is on.
+fileprivate class OverNotchFillView: NSView {
+  private var segmentControl: NSSegmentedControl!
+  private var defaultsObserver: NSObjectProtocol?
+
+  init() {
+    super.init(frame: .zero)
+
+    translatesAutoresizingMaskIntoConstraints = false
+
+    segmentControl = NSSegmentedControl(
+      labels: ["original", "stretch", "zoom"].map { ui.localized("quicksetting.over_notch_fill.\($0)") },
+      trackingMode: .selectOne,
+      target: self, action: #selector(fillAction)
+    )
+    segmentControl.translatesAutoresizingMaskIntoConstraints = false
+    for fill in Preference.OverNotchFill.allCases {
+      segmentControl.setTag(fill.rawValue, forSegment: fill.rawValue)
+    }
+
+    addSubview(segmentControl)
+    segmentControl.padding(.all)
+
+    update()
+    defaultsObserver = NotificationCenter.default.addObserver(
+      forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+    ) { [weak self] _ in
+      self?.update()
+    }
+  }
+
+  deinit {
+    if let defaultsObserver { NotificationCenter.default.removeObserver(defaultsObserver) }
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  private func update() {
+    isHidden = !Preference.bool(for: .legacyFullScreenUseCameraHousing)
+    segmentControl.selectSegment(withTag: Preference.integer(for: .overNotchFill))
+  }
+
+  @objc private func fillAction(_ sender: AnyObject) {
+    Preference.set(segmentControl.selectedTag(), for: .overNotchFill)
   }
 }
 

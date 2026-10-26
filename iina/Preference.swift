@@ -68,6 +68,9 @@ struct Preference {
     /** Extend legacy full screen into the camera housing (notch) area (bool) */
     static let legacyFullScreenUseCameraHousing = Key("legacyFullScreenUseCameraHousing")
 
+    /** How video fills the screen in full screen over the notch (int, OverNotchFill) */
+    static let overNotchFill = Key("overNotchFill")
+
     /** Black out other monitors while fullscreen (bool) */
     static let blackOutMonitor = Key("blackOutMonitor")
 
@@ -1096,6 +1099,7 @@ struct Preference {
     .fullScreenWhenOpen: false,
     .useLegacyFullScreen: false,
     .legacyFullScreenUseCameraHousing: false,
+    .overNotchFill: OverNotchFill.original.rawValue,
     .showChapterPos: false,
     .resumeLastPosition: true,
     .preventScreenSaver: true,
@@ -1316,6 +1320,16 @@ struct Preference {
   /// is used, which notch utilities and the system recognize as full screen.
   static var usesLegacyFullScreen: Bool {
     bool(for: .useLegacyFullScreen) || bool(for: .legacyFullScreenUseCameraHousing)
+  }
+
+  /// How video fills the screen in full screen over the notch.
+  enum OverNotchFill: Int, CaseIterable {
+    /// IINA's own scaling (aspect ratio and crop settings apply).
+    case original = 0
+    /// Show the whole frame stretched to the screen, ignoring the aspect ratio.
+    case stretch
+    /// Keep the aspect ratio and zoom until the screen is filled, cropping the edges.
+    case zoom
   }
 
   static func set(_ value: Int, for key: Key) { ud.set(value, forKey: key.rawValue) }

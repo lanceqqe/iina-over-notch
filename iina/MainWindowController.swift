@@ -280,6 +280,7 @@ class MainWindowController: PlayerWindowController {
     .blackOutMonitor,
     .useLegacyFullScreen,
     .legacyFullScreenUseCameraHousing,
+    .overNotchFill,
     .displayTimeAndBatteryInFullScreen,
     .controlBarToolbarButtons,
     .alwaysShowOnTopIcon,
@@ -337,6 +338,9 @@ class MainWindowController: PlayerWindowController {
       if case .fullscreen(legacy: true, _) = fsState {
         setWindowFrameForLegacyFullScreen()
       }
+      applyOverNotchFill()
+    case PK.overNotchFill.rawValue:
+      applyOverNotchFill()
     case PK.displayTimeAndBatteryInFullScreen.rawValue:
       if let newValue = change[.newKey] as? Bool {
         displayTimeAndBatteryInFullScreen = newValue
@@ -1536,6 +1540,7 @@ class MainWindowController: PlayerWindowController {
   func windowDidEnterFullScreen(_ notification: Notification) {
     log("Entered full screen mode")
     fsState.finishAnimating()
+    applyOverNotchFill()
 
     titleTextField?.alphaValue = 1
     for view in standardWindowButtons {
@@ -1724,6 +1729,7 @@ class MainWindowController: PlayerWindowController {
       setWindowFloatingOnTop(isOntop, updateOnTopStatus: false)
     }
 
+    applyOverNotchFill()
     resetCollectionBehavior()
     updateWindowParametersForMPV()
 
@@ -1840,6 +1846,24 @@ class MainWindowController: PlayerWindowController {
     window.backgroundColor = window.effectiveAppearance.isDark ? .black : .white
     // call delegate
     windowDidExitFullScreen(Notification(name: .iinaLegacyFullScreen))
+  }
+
+  /// Whether mpv's scaling is currently overridden by `applyOverNotchFill`.
+  private var overNotchFillApplied = false
+
+  /// Stretch or zoom the video to fill the screen while in full screen over the notch, overriding
+  /// IINA's own scaling. Restores it when leaving that mode.
+  func applyOverNotchFill() {
+    guard let mpv = player.mpv else { return }
+    var fill = Preference.OverNotchFill.original
+    if case .fullscreen(legacy: true, _) = fsState, Preference.bool(for: .legacyFullScreenUseCameraHousing) {
+      fill = Preference.OverNotchFill(rawValue: Preference.integer(for: .overNotchFill)) ?? .original
+    }
+    // Leave mpv alone unless this mode changed its scaling, so key bindings for panscan still work.
+    guard fill != .original || overNotchFillApplied else { return }
+    mpv.setFlag(MPVOption.Window.keepaspect, fill != .stretch)
+    mpv.setDouble(MPVOption.Video.panscan, fill == .zoom ? 1 : 0)
+    overNotchFillApplied = fill != .original
   }
 
   /// Set the window frame and if needed view frames to appropriately use the full screen.
