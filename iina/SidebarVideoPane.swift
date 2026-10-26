@@ -132,6 +132,17 @@ class SidebarVideoPane: SidebarScrollView {
       hdrRow
     )
 
+    // Only Macs with a camera housing (notch) need this.
+    if NSScreen.screens.contains(where: { $0.cameraHousingHeight != nil }) {
+      stack.addArrangedSubview(ui.hStack(
+        spacing: 8,
+        ui.image("macbook", size: 16, config: .sidebarIconConfig),
+        ui.label("quicksetting.over_notch"),
+        ui.flexibleSpace(),
+        OverNotchSwitch(),
+      ))
+    }
+
     container.addSubview(stack)
     stack.padding(.all)
     return container
@@ -489,6 +500,47 @@ fileprivate class HwdecSwitch: NSSwitch {
 
   @objc private func hwdecAction(_ sender: AnyObject) {
     player.toggleHardwareDecoding(state == .on)
+  }
+}
+
+
+/// Toggles showing video around the camera housing (notch) in full screen. A global setting, so the
+/// switch follows changes made from other windows.
+fileprivate class OverNotchSwitch: NSSwitch {
+  private var defaultsObserver: NSObjectProtocol?
+
+  init() {
+    super.init(frame: .zero)
+
+    if #available(macOS 26, *) {
+      controlSize = .small
+    }
+    target = self
+    action = #selector(overNotchAction)
+
+    update()
+    defaultsObserver = NotificationCenter.default.addObserver(
+      forName: UserDefaults.didChangeNotification, object: nil, queue: .main
+    ) { [weak self] _ in
+      self?.update()
+    }
+  }
+
+  deinit {
+    if let defaultsObserver { NotificationCenter.default.removeObserver(defaultsObserver) }
+  }
+
+  private func update() {
+    state = Preference.bool(for: .legacyFullScreenUseCameraHousing) ? .on : .off
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  @objc private func overNotchAction(_ sender: AnyObject) {
+    // Takes effect the next time full screen is entered, or right away if already in IINA's own full screen.
+    Preference.set(state == .on, for: .legacyFullScreenUseCameraHousing)
   }
 }
 

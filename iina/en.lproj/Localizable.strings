@@ -53,6 +53,7 @@
 "quicksetting.item_default" = "Default";
 "quicksetting.item_none" = "None";
 "quicksetting.hwdec" = "Hardware Decoding";
+"quicksetting.over_notch" = "Video over Notch";
 "quicksetting.deinterlace" = "Deinterlace";
 "quicksetting.hdr" = "HDR";
 "quicksetting.hide" = "Hide";

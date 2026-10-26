@@ -796,6 +796,8 @@ extension NSPasteboard.PasteboardType {
 extension NSWindow.Level {
   static let iinaFloating = NSWindow.Level(NSWindow.Level.floating.rawValue - 1)
   static let iinaBlackScreen = NSWindow.Level(NSWindow.Level.mainMenu.rawValue + 1)
+  /// Above the menu bar and notch utilities (which sit around the status bar level), below context menus.
+  static let iinaAboveNotch = NSWindow.Level(NSWindow.Level.popUpMenu.rawValue - 1)
 }
 
 extension NSUserInterfaceItemIdentifier {

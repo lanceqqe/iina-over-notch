@@ -1,3 +1,45 @@
+# IINA Over Notch
+
+A fork of [IINA](https://github.com/iina/iina) 1.5.0 that can play video **over the notch** on MacBooks with a camera housing — full screen covers the whole display, the way games do.
+
+Форк [IINA](https://github.com/iina/iina) 1.5.0: видео в полноэкранном режиме может занимать весь экран, **включая область вокруг челки**, как в играх.
+
+## What's different / Что изменено
+
+- **Video over Notch switch** in the sidebar: *Video* tab → *Video over Notch* (shown only on Macs with a notch). Off by default.
+  Переключатель **«Видео поверх челки»** в боковой панели на вкладке «Видео» (только на Mac с челкой). По умолчанию выключен.
+- When it is on, full screen uses IINA's own (legacy) full screen, sized to the whole screen and kept above the menu bar and notch utilities (Dynamic Island apps such as Vorssaint), so nothing shows over the video, even when hovering the notch.
+  Когда он включён, окно занимает весь экран и находится выше строки меню и «островов» на челке (например, Vorssaint): поверх видео ничего не появляется, даже при наведении на челку.
+- When it is off, full screen is the normal macOS full screen, which notch utilities recognize, exactly like upstream IINA.
+  Когда выключен — обычный системный полноэкранный режим, как в оригинальной IINA.
+- The switch takes effect immediately if you're already in IINA's own full screen; otherwise on the next full screen.
+- **No update checks**: the "Check for Updates" menu item and settings are removed and Sparkle never checks, so this build is not replaced by an official release.
+  **Проверка обновлений вырезана**, чтобы сборку не заменило официальное обновление.
+
+## Notch Fill plugin / Плагин Notch Fill
+
+[`plugins/notch-fill`](plugins/notch-fill) fills the screen in full screen: **Fill** (crop the edges) or **Stretch** (ignore aspect ratio). Toggle with <kbd>⌘</kbd><kbd>⌥</kbd><kbd>F</kbd> or *Plugins → Notch Fill*.
+
+Install: copy the folder to `~/Library/Application Support/com.colliderli.iina/plugins/io.lance.notchfill.iinaplugin` and enable it in *Settings → Plugins*.
+
+## Building / Сборка
+
+```bash
+./other/download_libs.sh --arch arm64 --skip-plugins
+xcodebuild -project iina.xcodeproj -scheme iina -configuration Release -arch arm64 -derivedDataPath build \
+  CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= ENABLE_HARDENED_RUNTIME=NO build
+```
+
+The app is at `build/Build/Products/Release/IINA.app`. It keeps IINA's bundle identifier, so it shares settings and plugins with IINA.
+
+## Known limitations
+
+- Dolby Vision profile 5 shows wrong (green) colors. This comes from upstream IINA's mpv renderer, not from this fork. Profiles 8.1 / 8.4 play fine (as HDR10 / HLG).
+
+Licensed under GPL-3.0, like IINA.
+
+---
+
 <p align="center">
 <img height="256" src="https://github.com/iina/iina/raw/master/iina/Assets.xcassets/AppIcon.appiconset/icon_512x512.png">
 </p>

@@ -784,7 +784,7 @@ class PlayerCore: NSObject {
 
     // The call to orderOut handles being in full screen mode if using the AppKit supplied full
     // screen mode, but if legacy full screen mode is being used then IINA needs to handle it.
-    if mainWindow.fsState.isFullscreen, Preference.bool(for: .useLegacyFullScreen) {
+    if mainWindow.fsState.isFullscreen, Preference.usesLegacyFullScreen {
       mainWindow.toggleWindowFullScreen()
     }
     // hide main window

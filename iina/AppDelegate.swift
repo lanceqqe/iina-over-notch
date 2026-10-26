@@ -196,6 +196,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     return Preference.bool(for: .receiveBetaUpdate) ? AppData.appcastBetaLink : AppData.appcastLink
   }
 
+  /// This is a patched build (notch full screen); an official update would replace it, so never check.
+  func updater(_ updater: SPUUpdater, mayPerform updateCheck: SPUUpdateCheck) throws {
+    throw NSError(domain: SUSparkleErrorDomain, code: Int(SUError.noUpdateError.rawValue),
+                  userInfo: [NSLocalizedDescriptionKey: "Updates are disabled in this build."])
+  }
+
   // MARK: - App Delegate
 
   func applicationWillFinishLaunching(_ notification: Notification) {

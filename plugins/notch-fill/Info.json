@@ -1,0 +1,14 @@
+{
+  "name": "Notch Fill",
+  "identifier": "io.lance.notchfill",
+  "version": "1.0.0",
+  "description": "Заполняет экран видео в полноэкранном режиме: обрезка (fill) или растягивание (stretch), как в играх.",
+  "author": {
+    "name": "lance"
+  },
+  "entry": "main.js",
+  "permissions": ["show-osd"],
+  "preferenceDefaults": {
+    "mode": "fill"
+  }
+}

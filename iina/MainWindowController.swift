@@ -279,6 +279,7 @@ class MainWindowController: PlayerWindowController {
     .pinchAction,
     .blackOutMonitor,
     .useLegacyFullScreen,
+    .legacyFullScreenUseCameraHousing,
     .displayTimeAndBatteryInFullScreen,
     .controlBarToolbarButtons,
     .alwaysShowOnTopIcon,
@@ -331,6 +332,11 @@ class MainWindowController: PlayerWindowController {
       }
     case PK.useLegacyFullScreen.rawValue:
       resetCollectionBehavior()
+    case PK.legacyFullScreenUseCameraHousing.rawValue:
+      resetCollectionBehavior()
+      if case .fullscreen(legacy: true, _) = fsState {
+        setWindowFrameForLegacyFullScreen()
+      }
     case PK.displayTimeAndBatteryInFullScreen.rawValue:
       if let newValue = change[.newKey] as? Bool {
         displayTimeAndBatteryInFullScreen = newValue
@@ -751,7 +757,7 @@ class MainWindowController: PlayerWindowController {
       // is moved to a new screen such as when the window is on an external display and that display
       // is disconnected. In legacy full screen mode IINA is responsible for adjusting the window's
       // frame.
-      guard fsState.isFullscreen, Preference.bool(for: .useLegacyFullScreen) else { return }
+      guard fsState.isFullscreen, Preference.usesLegacyFullScreen else { return }
       setWindowFrameForLegacyFullScreen()
     }
 
@@ -1767,7 +1773,7 @@ class MainWindowController: PlayerWindowController {
     switch fsState {
     case .windowed:
       guard !player.isInMiniPlayer else { return }
-      if Preference.bool(for: .useLegacyFullScreen) {
+      if Preference.usesLegacyFullScreen {
         log("Will enter legacy full screen mode")
         self.legacyAnimateToFullscreen()
       } else {
@@ -1831,6 +1837,7 @@ class MainWindowController: PlayerWindowController {
     setWindowAspectRatio(aspectRatio)
     cameraHousingWindow?.orderOut(self)
     cameraHousingWindow = nil
+    window.backgroundColor = window.effectiveAppearance.isDark ? .black : .white
     // call delegate
     windowDidExitFullScreen(Notification(name: .iinaLegacyFullScreen))
   }
@@ -1842,7 +1849,21 @@ class MainWindowController: PlayerWindowController {
     guard let window,
           let screen = window.screen ?? NSScreen.main else {return }
 
-    let unusable = screen.cameraHousingHeight ?? 0
+    // This can be called again while in full screen (screen change, notch setting toggled).
+    cameraHousingWindow?.orderOut(self)
+    cameraHousingWindow = nil
+
+    let useCameraHousing = Preference.bool(for: .legacyFullScreenUseCameraHousing)
+    let unusable = useCameraHousing ? 0 : (screen.cameraHousingHeight ?? 0)
+    if useCameraHousing {
+      // Covering the whole screen like a game: black outside the video, and stay above the menu bar
+      // and notch utilities (e.g. Dynamic Island apps), which don't treat legacy full screen as full screen.
+      window.backgroundColor = .black
+      window.level = .iinaAboveNotch
+    } else {
+      window.backgroundColor = window.effectiveAppearance.isDark ? .black : .white
+      window.level = .floating
+    }
     let frame = NSRect(
       x: screen.frame.minX,
       y: screen.frame.minY,
@@ -2188,7 +2209,7 @@ class MainWindowController: PlayerWindowController {
       // This problem has been reported to Apple as:
       // "setTitleWithRepresentedFilename throws NSInvalidArgumentException: NSNextStepFrame _displayName"
       // Feedback number FB9789129
-      if Preference.bool(for: .useLegacyFullScreen) {
+      if Preference.usesLegacyFullScreen {
         window?.title = player.info.currentURL?.lastPathComponent ?? ""
       } else {
         window?.setTitleWithRepresentedFilename(player.info.currentURL?.path ?? "")
@@ -3075,7 +3096,7 @@ class MainWindowController: PlayerWindowController {
 
   private func resetCollectionBehavior() {
     guard !fsState.isFullscreen else { return }
-    if Preference.bool(for: .useLegacyFullScreen) {
+    if Preference.usesLegacyFullScreen {
       window?.collectionBehavior = [.managed, .fullScreenAuxiliary]
     } else {
       window?.collectionBehavior = [.managed, .fullScreenPrimary]

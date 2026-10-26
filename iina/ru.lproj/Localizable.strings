@@ -53,6 +53,7 @@
 "quicksetting.item_default" = "По умолчанию";
 "quicksetting.item_none" = "Нет";
 "quicksetting.hwdec" = "Аппаратное декодирование";
+"quicksetting.over_notch" = "Видео поверх челки";
 "quicksetting.deinterlace" = "Деинтерлейсинг";
 "quicksetting.hdr" = "HDR";
 "quicksetting.hide" = "Скрыть";

@@ -65,6 +65,9 @@ struct Preference {
 
     static let useLegacyFullScreen = Key("useLegacyFullScreen")
 
+    /** Extend legacy full screen into the camera housing (notch) area (bool) */
+    static let legacyFullScreenUseCameraHousing = Key("legacyFullScreenUseCameraHousing")
+
     /** Black out other monitors while fullscreen (bool) */
     static let blackOutMonitor = Key("blackOutMonitor")
 
@@ -1092,6 +1095,7 @@ struct Preference {
     .pauseWhenOpen: false,
     .fullScreenWhenOpen: false,
     .useLegacyFullScreen: false,
+    .legacyFullScreenUseCameraHousing: false,
     .showChapterPos: false,
     .resumeLastPosition: true,
     .preventScreenSaver: true,
@@ -1307,6 +1311,12 @@ struct Preference {
   static func value(for key: Key) -> Any? { ud.value(forKey: key.rawValue) }
 
   static func set(_ value: Bool, for key: Key) { ud.set(value, forKey: key.rawValue) }
+
+  /// Covering the camera housing (notch) needs IINA's own full screen; otherwise AppKit full screen
+  /// is used, which notch utilities and the system recognize as full screen.
+  static var usesLegacyFullScreen: Bool {
+    bool(for: .useLegacyFullScreen) || bool(for: .legacyFullScreenUseCameraHousing)
+  }
 
   static func set(_ value: Int, for key: Key) { ud.set(value, forKey: key.rawValue) }
 
